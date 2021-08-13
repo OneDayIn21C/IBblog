@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>앱스토어 리뷰 크롤링 | EVERYTHING IS OK</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="앱스토어 리뷰 크롤링" />
+<meta name="author" content="ib choi" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="selenium을 활용해 동적 페이지 앱스토어 리뷰 데이터 크롤링" />
+<meta property="og:description" content="selenium을 활용해 동적 페이지 앱스토어 리뷰 데이터 크롤링" />
+<link rel="canonical" href="https://onedayin21c.github.io/IBblog/selenium/jupyter/bigquery/2021/08/13/%EC%95%B1%EC%8A%A4%ED%86%A0%EC%96%B4-%EB%A6%AC%EB%B7%B0-%ED%81%AC%EB%A1%A4%EB%A7%81-(3).html" />
+<meta property="og:url" content="https://onedayin21c.github.io/IBblog/selenium/jupyter/bigquery/2021/08/13/%EC%95%B1%EC%8A%A4%ED%86%A0%EC%96%B4-%EB%A6%AC%EB%B7%B0-%ED%81%AC%EB%A1%A4%EB%A7%81-(3).html" />
+<meta property="og:site_name" content="EVERYTHING IS OK" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-08-13T00:00:00-05:00" />
+<script type="application/ld+json">
+{"datePublished":"2021-08-13T00:00:00-05:00","url":"https://onedayin21c.github.io/IBblog/selenium/jupyter/bigquery/2021/08/13/%EC%95%B1%EC%8A%A4%ED%86%A0%EC%96%B4-%EB%A6%AC%EB%B7%B0-%ED%81%AC%EB%A1%A4%EB%A7%81-(3).html","@type":"BlogPosting","headline":"앱스토어 리뷰 크롤링","dateModified":"2021-08-13T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://onedayin21c.github.io/IBblog/selenium/jupyter/bigquery/2021/08/13/%EC%95%B1%EC%8A%A4%ED%86%A0%EC%96%B4-%EB%A6%AC%EB%B7%B0-%ED%81%AC%EB%A1%A4%EB%A7%81-(3).html"},"author":{"@type":"Person","name":"ib choi"},"description":"selenium을 활용해 동적 페이지 앱스토어 리뷰 데이터 크롤링","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/IBblog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://onedayin21c.github.io/IBblog/feed.xml" title="EVERYTHING IS OK" /><link rel="shortcut icon" type="image/x-icon" href="/IBblog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/IBblog/">EVERYTHING IS OK</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/IBblog/about/">About Me</a><a class="page-link" href="/IBblog/search/">Search</a><a class="page-link" href="/IBblog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">앱스토어 리뷰 크롤링</h1><p class="page-description">selenium을 활용해 동적 페이지 앱스토어 리뷰 데이터 크롤링</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-08-13T00:00:00-05:00" itemprop="datePublished">
+        Aug 13, 2021
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">ib choi</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      6 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/IBblog/categories/#Selenium">Selenium</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/IBblog/categories/#jupyter">jupyter</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/IBblog/categories/#BigQuery">BigQuery</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/OneDayIn21C/IBblog/tree/master/_notebooks/2021-08-13-앱스토어 리뷰 크롤링  (3).ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/IBblog/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/OneDayIn21C/IBblog/master?filepath=_notebooks%2F2021-08-13-%E1%84%8B%E1%85%A2%E1%86%B8%E1%84%89%E1%85%B3%E1%84%90%E1%85%A9%E1%84%8B%E1%85%A5+%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2+%E1%84%8F%E1%85%B3%E1%84%85%E1%85%A9%E1%86%AF%E1%84%85%E1%85%B5%E1%86%BC++%283%29.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/IBblog/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/OneDayIn21C/IBblog/blob/master/_notebooks/2021-08-13-앱스토어 리뷰 크롤링  (3).ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/IBblog/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h1"><a href="#1.--데이터-크롤링">1.  데이터 크롤링 </a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#1-1.-동적-페이지-데이터-불러오기-(chromdriver-활용)">1-1. 동적 페이지 데이터 불러오기 (chromdriver 활용) </a></li>
+<li class="toc-entry toc-h2"><a href="#1-2.-개별-리뷰-박스의-ID-크롤링">1-2. 개별 리뷰 박스의 ID 크롤링 </a></li>
+<li class="toc-entry toc-h2"><a href="#1-3.-리뷰-데이터-크롤링">1-3. 리뷰 데이터 크롤링 </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#2.-크롤링-데이터-전처리">2. 크롤링 데이터 전처리 </a></li>
+<li class="toc-entry toc-h1"><a href="#3.-빅쿼리로-전송">3. 빅쿼리로 전송 </a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#3-1.-빅쿼리로-전송">3-1. 빅쿼리로 전송 </a></li>
+<li class="toc-entry toc-h2"><a href="#3-2.-빅쿼리-데이터-로드-및-확인">3-2. 빅쿼리 데이터 로드 및 확인 </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2021-08-13-앱스토어 리뷰 크롤링  (3).ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.common.keys</span> <span class="kn">import</span> <span class="n">Keys</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.remote.webelement</span> <span class="kn">import</span> <span class="n">WebElement</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver</span> <span class="kn">import</span> <span class="n">ActionChains</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.support.ui</span> <span class="kn">import</span> <span class="n">WebDriverWait</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.support</span> <span class="kn">import</span> <span class="n">expected_conditions</span> <span class="k">as</span> <span class="n">EC</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">datetime</span> 
+
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">pymysql</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="1.--데이터-크롤링">
+<a class="anchor" href="#1.--%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%81%AC%EB%A1%A4%EB%A7%81" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.  데이터 크롤링<a class="anchor-link" href="#1.--%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%81%AC%EB%A1%A4%EB%A7%81"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="1-1.-동적-페이지-데이터-불러오기-(chromdriver-활용)">
+<a class="anchor" href="#1-1.-%EB%8F%99%EC%A0%81-%ED%8E%98%EC%9D%B4%EC%A7%80-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%B6%88%EB%9F%AC%EC%98%A4%EA%B8%B0-(chromdriver-%ED%99%9C%EC%9A%A9)" aria-hidden="true"><span class="octicon octicon-link"></span></a>1-1. 동적 페이지 데이터 불러오기 (chromdriver 활용)<a class="anchor-link" href="#1-1.-%EB%8F%99%EC%A0%81-%ED%8E%98%EC%9D%B4%EC%A7%80-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%B6%88%EB%9F%AC%EC%98%A4%EA%B8%B0-(chromdriver-%ED%99%9C%EC%9A%A9)"> </a>
+</h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">chromedriver</span> <span class="o">=</span> <span class="s1">'/usr/local/bin/chromedriver'</span>
+<span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Chrome</span><span class="p">(</span><span class="n">chromedriver</span><span class="p">)</span>
+
+<span class="c1"># 앱스토어 자란다 페이지</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="s2">"https://apps.apple.com/kr/app/</span><span class="si">%E</span><span class="s2">C</span><span class="si">%9E%90%</span><span class="s2">EB</span><span class="si">%9E%80%</span><span class="s2">EB%8B%A4/id1469857402#see-all/reviews"</span>
+<span class="p">)</span>
+
+<span class="c1"># 동적 페이지의 데이터를 모두 불러오기 위해 스크롤을 가장 아래까지 내림</span>
+
+<span class="n">prev_height</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">"return document.body.scrollHeight"</span><span class="p">)</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="c1"># 스크롤을 화면 가장 아래로 내린다</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">"window.scrollTo(0,document.body.scrollHeight)"</span><span class="p">)</span>
+
+    <span class="c1"># 페이지 로딩 대기</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="c1"># 현재 문서 높이를 가져와서 저장</span>
+    <span class="n">curr_height</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">"return document.body.scrollHeight"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">curr_height</span> <span class="o">==</span> <span class="n">prev_height</span><span class="p">):</span>
+        <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">prev_height</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span>
+            <span class="s2">"return document.body.scrollHeight"</span><span class="p">)</span>
+        
+<span class="n">curr_height</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="1-2.-개별-리뷰-박스의-ID-크롤링">
+<a class="anchor" href="#1-2.-%EA%B0%9C%EB%B3%84-%EB%A6%AC%EB%B7%B0-%EB%B0%95%EC%8A%A4%EC%9D%98-ID-%ED%81%AC%EB%A1%A4%EB%A7%81" aria-hidden="true"><span class="octicon octicon-link"></span></a>1-2. 개별 리뷰 박스의 ID 크롤링<a class="anchor-link" href="#1-2.-%EA%B0%9C%EB%B3%84-%EB%A6%AC%EB%B7%B0-%EB%B0%95%EC%8A%A4%EC%9D%98-ID-%ED%81%AC%EB%A1%A4%EB%A7%81"> </a>
+</h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">box</span><span class="o">=</span><span class="n">driver</span><span class="o">.</span><span class="n">find_elements_by_class_name</span><span class="p">(</span><span class="s1">'l-column--equal-height'</span><span class="p">)</span>
+
+<span class="n">box_id</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">box</span><span class="p">:</span>
+    <span class="n">box_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s1">'id'</span><span class="p">))</span>
+
+    
+<span class="nb">print</span><span class="p">(</span><span class="n">box_id</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2"> 리뷰 박스 개수 ="</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">box_id</span><span class="p">),</span><span class="s1">'개'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>['ember89', 'ember91', 'ember93']
+
+ 리뷰 박스 개수 = 45 개
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="1-3.-리뷰-데이터-크롤링">
+<a class="anchor" href="#1-3.-%EB%A6%AC%EB%B7%B0-%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%81%AC%EB%A1%A4%EB%A7%81" aria-hidden="true"><span class="octicon octicon-link"></span></a>1-3. 리뷰 데이터 크롤링<a class="anchor-link" href="#1-3.-%EB%A6%AC%EB%B7%B0-%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%81%AC%EB%A1%A4%EB%A7%81"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>앱스토어의 리뷰 데이터는 (1) 코멘트의 길이가 길거나 혹은 (2) 개발자의 답변이 있을 경우, \
+개별 리뷰 박스의 '더 보기' 버튼을 클릭해 데이터를 추가로 불어와야 크롤링 가능</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_id</span><span class="p">(</span><span class="s1">'ember101'</span><span class="p">)</span><span class="o">.</span><span class="n">find_element_by_class_name</span><span class="p">(</span><span class="s1">'we-clamp'</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'아이가 공부를 너무 하기 싫어해서 고민이였는데 샘들이 친구처럼 놀아주면서 하니까 학습 효과가 너무 좋네요^^ 자주 애용해야겠어요. 아들두 쌤 또 언제 오냐구 그러고… 일반 학습지보다 나은듯~. 만족합니다^^'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">stars</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_elements_by_class_name</span><span class="p">(</span><span class="s1">'we-star-rating--large'</span><span class="p">)</span> <span class="c1"># 별점</span>
+<span class="n">date</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_elements_by_class_name</span><span class="p">(</span><span class="s1">'we-customer-review__date'</span><span class="p">)</span> <span class="c1"># 작성일</span>
+<span class="n">user</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_elements_by_class_name</span><span class="p">(</span><span class="s1">'we-customer-review__user'</span><span class="p">)</span> <span class="c1"># 작성자</span>
+<span class="n">title</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_elements_by_class_name</span><span class="p">(</span><span class="s1">'we-customer-review__title'</span><span class="p">)</span> <span class="c1"># 제목</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">review</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">box_id</span><span class="p">):</span>
+    
+    <span class="c1"># 데이터 로드 대기</span>
+<span class="c1">#     time.sleep(1)</span>
+    
+    <span class="c1"># 박스에 '더 보기' 버튼이 있을 경우</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># '더 보기' 클릭</span>
+        <span class="n">button</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_css_selector</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"#</span><span class="si">{</span><span class="nb">id</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> &gt; div.we-customer-review.lockup &gt; blockquote:nth-child(4) &gt; button"</span>
+        <span class="p">)</span>
+        <span class="n">button</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+
+        <span class="n">review</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_class_name</span><span class="p">(</span>
+                <span class="s1">'we-customer-review__body--modal'</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="c1">#리뷰 코멘트</span>
+        
+        <span class="c1"># 박스 닫기</span>
+        <span class="n">exit</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_class_name</span><span class="p">(</span><span class="s1">'we-modal__close'</span><span class="p">)</span>
+        <span class="n">exit</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="s1">'더 보기 클릭'</span><span class="p">)</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">review</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_id</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="nb">id</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span><span class="o">.</span>\
+                      <span class="n">find_element_by_class_name</span><span class="p">(</span><span class="s1">'we-clamp'</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="c1">#리뷰 코멘트</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="s1">'pass'</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1"> 크롤링 완료'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(0, 'ember89') pass
+(1, 'ember91') pass
+(2, 'ember93') pass
+(3, 'ember95') 더 보기 클릭
+(4, 'ember97') 더 보기 클릭
+(5, 'ember99') 더 보기 클릭
+(6, 'ember101') 더 보기 클릭
+(7, 'ember103') 더 보기 클릭
+(8, 'ember105') 더 보기 클릭
+(9, 'ember107') 더 보기 클릭
+(10, 'ember120') 더 보기 클릭
+(11, 'ember122') 더 보기 클릭
+(12, 'ember124') 더 보기 클릭
+(13, 'ember126') 더 보기 클릭
+(14, 'ember128') 더 보기 클릭
+(15, 'ember130') 더 보기 클릭
+(16, 'ember132') 더 보기 클릭
+(17, 'ember134') 더 보기 클릭
+(18, 'ember136') 더 보기 클릭
+(19, 'ember138') 더 보기 클릭
+(20, 'ember150') 더 보기 클릭
+(21, 'ember152') 더 보기 클릭
+(22, 'ember154') 더 보기 클릭
+(23, 'ember156') 더 보기 클릭
+(24, 'ember158') 더 보기 클릭
+(25, 'ember160') 더 보기 클릭
+(26, 'ember162') 더 보기 클릭
+(27, 'ember164') 더 보기 클릭
+(28, 'ember166') 더 보기 클릭
+(29, 'ember168') 더 보기 클릭
+(30, 'ember180') 더 보기 클릭
+(31, 'ember182') 더 보기 클릭
+(32, 'ember184') 더 보기 클릭
+(33, 'ember186') 더 보기 클릭
+(34, 'ember188') pass
+(35, 'ember190') 더 보기 클릭
+(36, 'ember192') 더 보기 클릭
+(37, 'ember194') pass
+(38, 'ember196') 더 보기 클릭
+(39, 'ember198') 더 보기 클릭
+(40, 'ember205') pass
+(41, 'ember207') 더 보기 클릭
+(42, 'ember209') 더 보기 클릭
+(43, 'ember211') pass
+(44, 'ember213') 더 보기 클릭
+
+ 크롤링 완료
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="2.-크롤링-데이터-전처리">
+<a class="anchor" href="#2.-%ED%81%AC%EB%A1%A4%EB%A7%81-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%A0%84%EC%B2%98%EB%A6%AC" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. 크롤링 데이터 전처리<a class="anchor-link" href="#2.-%ED%81%AC%EB%A1%A4%EB%A7%81-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%A0%84%EC%B2%98%EB%A6%AC"> </a>
+</h1>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">title_lst</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">title</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">text</span> <span class="o">!=</span> <span class="s1">'개발자 답변'</span><span class="p">:</span>
+        <span class="n">title_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">user_lst</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">user</span><span class="p">:</span>
+    <span class="n">user_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">date_lst</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">date</span><span class="p">:</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s1">'aria-label'</span><span class="p">)</span>
+    <span class="n">date_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="c1"># str -&gt; datetime 변환</span>
+        <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+            <span class="n">z</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'년 '</span><span class="p">,</span> <span class="s1">'-'</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'월 '</span><span class="p">,</span> <span class="s1">'-'</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'일'</span><span class="p">,</span> <span class="s1">''</span><span class="p">),</span>
+            <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">"</span><span class="p">))</span>
+
+<span class="n">stars_lst</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">stars</span><span class="p">:</span>
+    <span class="n">stars_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="c1"># int로 변환</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s1">'aria-label'</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="p">)</span>
+
+<span class="nb">len</span><span class="p">(</span><span class="n">title_lst</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">date_lst</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">stars_lst</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_lst</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(45, 45, 45, 45)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s1">'app'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'자란다'</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">title_lst</span><span class="p">))]</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span> <span class="o">=</span> <span class="n">title_lst</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'user'</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_lst</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'date'</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_lst</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'stars'</span><span class="p">]</span> <span class="o">=</span> <span class="n">stars_lst</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'comment'</span><span class="p">]</span> <span class="o">=</span> <span class="n">review</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">dtypes</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(45, 6)
+app                object
+title              object
+user               object
+date       datetime64[ns]
+stars               int64
+comment            object
+dtype: object
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>app</th>
+      <th>title</th>
+      <th>user</th>
+      <th>date</th>
+      <th>stars</th>
+      <th>comment</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>자란다</td>
+      <td>좋아요</td>
+      <td>maum.c</td>
+      <td>2019-10-31</td>
+      <td>5</td>
+      <td>원래 쓰고 있었는데 앱 나오니 훨씬 편하고 좋아요 나름 꽤 초창기부터 써왔는데 점점...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>자란다</td>
+      <td>드디어 앱이 나왔군요~~!</td>
+      <td>파랑땡땡구리</td>
+      <td>2019-07-13</td>
+      <td>5</td>
+      <td>항상 감사하고 있습니다. 우리 애들 자란다 선생님 너무 좋아해요. 계속 자란다 선생...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>자란다</td>
+      <td>선생님이 너무좋았답니다.</td>
+      <td>terry11117</td>
+      <td>2020-03-26</td>
+      <td>5</td>
+      <td>다른 돌봄회사들보다 체계적이어서 감동받았어요. 우선 자란다 선생님의 선택의 폭이 넓...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>자란다</td>
+      <td>아이들이 자란다 선생님을 너무 좋아해요~~</td>
+      <td>ysmom23</td>
+      <td>2019-09-19</td>
+      <td>5</td>
+      <td>엄마는 힘들어서 못해주는 몸으로 놀아주기.. 자란쌤이 아이와 함께 놀아주니 아이가 ...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>자란다</td>
+      <td>맞벌이 부부에게 큰 힘이 됩니다</td>
+      <td>별2개</td>
+      <td>2021-07-30</td>
+      <td>5</td>
+      <td>이런 리뷰를 잘 안쓰는데 자란다에게 고마운 마음을 표현하고자 끄적여봅니다^^\n\n...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="3.-빅쿼리로-전송">
+<a class="anchor" href="#3.-%EB%B9%85%EC%BF%BC%EB%A6%AC%EB%A1%9C-%EC%A0%84%EC%86%A1" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. 빅쿼리로 전송<a class="anchor-link" href="#3.-%EB%B9%85%EC%BF%BC%EB%A6%AC%EB%A1%9C-%EC%A0%84%EC%86%A1"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="3-1.-빅쿼리로-전송">
+<a class="anchor" href="#3-1.-%EB%B9%85%EC%BF%BC%EB%A6%AC%EB%A1%9C-%EC%A0%84%EC%86%A1" aria-hidden="true"><span class="octicon octicon-link"></span></a>3-1. 빅쿼리로 전송<a class="anchor-link" href="#3-1.-%EB%B9%85%EC%BF%BC%EB%A6%AC%EB%A1%9C-%EC%A0%84%EC%86%A1"> </a>
+</h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">google.oauth2</span> <span class="kn">import</span> <span class="n">service_account</span>
+<span class="kn">import</span> <span class="nn">pandas_gbq</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cd</span> <span class="o">=</span> <span class="n">service_account</span><span class="o">.</span><span class="n">Credentials</span><span class="o">.</span><span class="n">from_service_account_file</span><span class="p">(</span>
+    <span class="s1">'/Users/choeinbeom/Downloads/tidal-surf-302413-582aad3f1e46.json'</span><span class="p">)</span>
+<span class="n">project_id</span> <span class="o">=</span> <span class="s1">'tidal-surf-302413'</span>
+<span class="n">destination_table</span> <span class="o">=</span> <span class="s1">'test_jaranda.reviews'</span>
+<span class="n">df</span><span class="o">.</span><span class="n">to_gbq</span><span class="p">(</span><span class="n">destination_table</span><span class="p">,</span><span class="n">project_id</span><span class="p">,</span><span class="n">if_exists</span><span class="o">=</span><span class="s1">'append'</span><span class="p">,</span><span class="n">credentials</span><span class="o">=</span><span class="n">cd</span><span class="p">)</span> 
+<span class="nb">print</span><span class="p">(</span><span class="s1">'migration complete'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>1it [00:02,  2.76s/it]</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>migration complete
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="3-2.-빅쿼리-데이터-로드-및-확인">
+<a class="anchor" href="#3-2.-%EB%B9%85%EC%BF%BC%EB%A6%AC-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%A1%9C%EB%93%9C-%EB%B0%8F-%ED%99%95%EC%9D%B8" aria-hidden="true"><span class="octicon octicon-link"></span></a>3-2. 빅쿼리 데이터 로드 및 확인<a class="anchor-link" href="#3-2.-%EB%B9%85%EC%BF%BC%EB%A6%AC-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%A1%9C%EB%93%9C-%EB%B0%8F-%ED%99%95%EC%9D%B8"> </a>
+</h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">google.cloud</span> <span class="kn">import</span> <span class="n">bigquery</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cd</span> <span class="o">=</span> <span class="n">service_account</span><span class="o">.</span><span class="n">Credentials</span><span class="o">.</span><span class="n">from_service_account_file</span><span class="p">(</span>
+    <span class="s1">'/Users/choeinbeom/Downloads/tidal-surf-302413-582aad3f1e46.json'</span><span class="p">)</span>
+
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">bigquery</span><span class="o">.</span><span class="n">Client</span> <span class="p">(</span><span class="n">project</span> <span class="o">=</span> <span class="s1">'tidal-surf-302413'</span> <span class="p">,</span> <span class="n">credentials</span> <span class="o">=</span> <span class="n">cd</span><span class="p">)</span> 
+<span class="n">query</span> <span class="o">=</span> <span class="s1">'SELECT * FROM test_jaranda.reviews'</span> 
+
+<span class="n">df_result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">df_result</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_result</span><span class="o">.</span><span class="n">dtypes</span><span class="p">)</span>
+
+<span class="n">df_result</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(339, 6)
+title                   object
+user                    object
+date       datetime64[ns, UTC]
+stars                    int64
+comment                 object
+app                     object
+dtype: object
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>user</th>
+      <th>date</th>
+      <th>stars</th>
+      <th>comment</th>
+      <th>app</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>회원탈퇴</td>
+      <td>구름바이러스</td>
+      <td>2019-12-10 00:00:00+00:00</td>
+      <td>5</td>
+      <td>회원탈퇴 어떻게 하나요 선생님 지원하려다 앱 따로있는거 모르고 가입했는데</td>
+      <td>자란다</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>선생님들이 우수해요</td>
+      <td>nikiiiiaaaasss</td>
+      <td>2020-09-23 00:00:00+00:00</td>
+      <td>5</td>
+      <td>평균적으로 우수한 선생님이 많아요. 교사관리가\n잘 되고있는것 같아요</td>
+      <td>자란다</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>좋아요</td>
+      <td>maum.c</td>
+      <td>2019-10-31 00:00:00+00:00</td>
+      <td>5</td>
+      <td>원래 쓰고 있었는데 앱 나오니 훨씬 편하고 좋아요 나름 꽤 초창기부터 써왔는데 점점...</td>
+      <td>자란다</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>덕분에 아이도 저도 잘 놀아요</td>
+      <td>Ameri.cano</td>
+      <td>2019-10-31 00:00:00+00:00</td>
+      <td>5</td>
+      <td>자란다 서비스를 쓴건 솔직히 아이를 위해서이기도 했지만, 저를 위해서 이기도 했어요...</td>
+      <td>자란다</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>자란다 앱 너무 편하네요</td>
+      <td>노수지</td>
+      <td>2019-10-31 00:00:00+00:00</td>
+      <td>5</td>
+      <td>예전에 웹으로 사용했었는데 정말 앱이 나와서 사용하기 편리해졌네요. 항상 느끼는거지...</td>
+      <td>자란다</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">crong</span> <span class="o">=</span> <span class="n">df_result</span><span class="p">[</span><span class="n">df_result</span><span class="p">[</span><span class="s1">'app'</span><span class="p">]</span><span class="o">==</span><span class="s1">'째깍악어'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">newjrd</span> <span class="o">=</span> <span class="n">df_result</span><span class="p">[</span><span class="n">df_result</span><span class="p">[</span><span class="s1">'app'</span><span class="p">]</span><span class="o">==</span><span class="s1">'자란다'</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="s1">'date'</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">newjrd</span><span class="p">[</span><span class="n">newjrd</span><span class="p">[[</span><span class="s1">'title'</span><span class="p">,</span> <span class="s1">'user'</span><span class="p">]]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>user</th>
+      <th>date</th>
+      <th>stars</th>
+      <th>comment</th>
+      <th>app</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>40</th>
+      <td>선생님 관리가 제대로 안되는듯</td>
+      <td>nkein82</td>
+      <td>2021-06-08 00:00:00+00:00</td>
+      <td>5</td>
+      <td>예약하고 결재까지 다했는데 뜬금없이 그날은 안된다면서 하루전에 일방적으로 취소해달라...</td>
+      <td>자란다</td>
+    </tr>
+    <tr>
+      <th>46</th>
+      <td>신청서작성시 단계가 안 넘어가요!!!</td>
+      <td>사용하고싶어요!</td>
+      <td>2021-05-19 00:00:00+00:00</td>
+      <td>1</td>
+      <td>너무 화가나려하네요! 방문일정 등록하려는데 방문 종류 선택할때도 터치가 안먹는건지 ...</td>
+      <td>자란다</td>
+    </tr>
+    <tr>
+      <th>44</th>
+      <td>워킹맘은 절대 쓰지 마세요</td>
+      <td>VIP멤버펑</td>
+      <td>2021-03-31 00:00:00+00:00</td>
+      <td>1</td>
+      <td>일부러 추천율 100프로인 잘자란 선생님 골라서 (돌봄 시간도 100시간 넘는) 신...</td>
+      <td>자란다</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>너무 자주 어플이 먹통이 되어요ㅠㅠ</td>
+      <td>11166554443388</td>
+      <td>2021-03-17 00:00:00+00:00</td>
+      <td>5</td>
+      <td>자주 수업 리스트도 뜨지 않고 어플이 부팅되는데 너무 오래 걸려요ㅠㅠ</td>
+      <td>자란다</td>
+    </tr>
+    <tr>
+      <th>47</th>
+      <td>회원탈퇴 기능이 없네요</td>
+      <td>hhhhhhhh28472919</td>
+      <td>2021-01-22 00:00:00+00:00</td>
+      <td>1</td>
+      <td>너무 찜찜하고 신고하려다 말았는데 회원 탈퇴 기능 만들어주세요\n이런걸 리뷰에 써야...</td>
+      <td>자란다</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>ㅇㅇㅇㅇ</td>
+      <td>Icefall입니다</td>
+      <td>2020-11-27 00:00:00+00:00</td>
+      <td>5</td>
+      <td>카카오페이 등록 안됨 앱 느리고 오류 많음 ㅠ\n선생님 보다가 뒤로가기 안뎀</td>
+      <td>자란다</td>
+    </tr>
+    <tr>
+      <th>36</th>
+      <td>오늘 자란다의 일방적 “신청취소” 후 느낀점</td>
+      <td>사노리</td>
+      <td>2020-09-25 00:00:00+00:00</td>
+      <td>5</td>
+      <td>초1아들 영어 첫공부에 대한 블로그 추천글이 많아 학원보내기 불안한 시기에 적절히 ...</td>
+      <td>자란다</td>
+    </tr>
+    <tr>
+      <th>52</th>
+      <td>아이폰에서 최근에 계속 로딩만 뜨고 넘어가지를 않네요 ㅠㅠ 저만 그런건가요</td>
+      <td>저만안되나요</td>
+      <td>2020-08-04 00:00:00+00:00</td>
+      <td>2</td>
+      <td>앱 실행하면 첫 화면에서 로딩 아이콘만 뜨고 넘어가지를 못하네요. 잠깐 그런가보다 ...</td>
+      <td>자란다</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>탈퇴방법</td>
+      <td>ㅜㅏ나니미</td>
+      <td>2020-06-26 00:00:00+00:00</td>
+      <td>5</td>
+      <td>선생님 가입하려했는데 실수로 부모님으로 가입해서 다시 가입하려니까 이미 핸드폰번호가...</td>
+      <td>자란다</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>좋은 선생님 추천</td>
+      <td>해해해햇</td>
+      <td>2020-01-27 00:00:00+00:00</td>
+      <td>5</td>
+      <td>좋은 선생님이 너무 좋아요</td>
+      <td>자란다</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>회원탈퇴</td>
+      <td>구름바이러스</td>
+      <td>2019-12-10 00:00:00+00:00</td>
+      <td>5</td>
+      <td>회원탈퇴 어떻게 하나요 선생님 지원하려다 앱 따로있는거 모르고 가입했는데</td>
+      <td>자란다</td>
+    </tr>
+    <tr>
+      <th>54</th>
+      <td>회원탈퇴</td>
+      <td>마사룰루랄ㄹ라</td>
+      <td>2019-10-31 00:00:00+00:00</td>
+      <td>4</td>
+      <td>앱과 웹 모두 뒤져보아도 회원탈퇴 기능이 없네요. 업데이트 바랍니다.</td>
+      <td>자란다</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="OneDayIn21C/IBblog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/IBblog/selenium/jupyter/bigquery/2021/08/13/%EC%95%B1%EC%8A%A4%ED%86%A0%EC%96%B4-%EB%A6%AC%EB%B7%B0-%ED%81%AC%EB%A1%A4%EB%A7%81-(3).html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/IBblog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/IBblog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/IBblog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/fastai" title="fastai"><svg class="svg-icon grey"><use xlink:href="/IBblog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/IBblog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
