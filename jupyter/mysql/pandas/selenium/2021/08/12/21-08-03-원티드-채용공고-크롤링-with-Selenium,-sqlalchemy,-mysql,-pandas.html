@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>원티드 채용공고 크롤링 | Everything is OK</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="원티드 채용공고 크롤링" />
+<meta name="author" content="ib choi" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="채용사이트 원티드에 올라온 데이터 직무의 채용공고 크롤링" />
+<meta property="og:description" content="채용사이트 원티드에 올라온 데이터 직무의 채용공고 크롤링" />
+<link rel="canonical" href="https://onedayin21c.github.io/IBblog/jupyter/mysql/pandas/selenium/2021/08/12/21-08-03-%EC%9B%90%ED%8B%B0%EB%93%9C-%EC%B1%84%EC%9A%A9%EA%B3%B5%EA%B3%A0-%ED%81%AC%EB%A1%A4%EB%A7%81-with-Selenium,-sqlalchemy,-mysql,-pandas.html" />
+<meta property="og:url" content="https://onedayin21c.github.io/IBblog/jupyter/mysql/pandas/selenium/2021/08/12/21-08-03-%EC%9B%90%ED%8B%B0%EB%93%9C-%EC%B1%84%EC%9A%A9%EA%B3%B5%EA%B3%A0-%ED%81%AC%EB%A1%A4%EB%A7%81-with-Selenium,-sqlalchemy,-mysql,-pandas.html" />
+<meta property="og:site_name" content="Everything is OK" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-08-12T00:00:00-05:00" />
+<script type="application/ld+json">
+{"datePublished":"2021-08-12T00:00:00-05:00","url":"https://onedayin21c.github.io/IBblog/jupyter/mysql/pandas/selenium/2021/08/12/21-08-03-%EC%9B%90%ED%8B%B0%EB%93%9C-%EC%B1%84%EC%9A%A9%EA%B3%B5%EA%B3%A0-%ED%81%AC%EB%A1%A4%EB%A7%81-with-Selenium,-sqlalchemy,-mysql,-pandas.html","@type":"BlogPosting","headline":"원티드 채용공고 크롤링","dateModified":"2021-08-12T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://onedayin21c.github.io/IBblog/jupyter/mysql/pandas/selenium/2021/08/12/21-08-03-%EC%9B%90%ED%8B%B0%EB%93%9C-%EC%B1%84%EC%9A%A9%EA%B3%B5%EA%B3%A0-%ED%81%AC%EB%A1%A4%EB%A7%81-with-Selenium,-sqlalchemy,-mysql,-pandas.html"},"author":{"@type":"Person","name":"ib choi"},"description":"채용사이트 원티드에 올라온 데이터 직무의 채용공고 크롤링","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/IBblog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://onedayin21c.github.io/IBblog/feed.xml" title="Everything is OK" /><link rel="shortcut icon" type="image/x-icon" href="/IBblog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/IBblog/">Everything is OK</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/IBblog/about/">About Me</a><a class="page-link" href="/IBblog/search/">Search</a><a class="page-link" href="/IBblog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">원티드 채용공고 크롤링</h1><p class="page-description">채용사이트 원티드에 올라온 데이터 직무의 채용공고 크롤링</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-08-12T00:00:00-05:00" itemprop="datePublished">
+        Aug 12, 2021
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">ib choi</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      11 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/IBblog/categories/#jupyter">jupyter</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/IBblog/categories/#MySQL">MySQL</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/IBblog/categories/#pandas">pandas</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/IBblog/categories/#selenium">selenium</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/OneDayIn21C/IBblog/tree/master/_notebooks/[21-08-03]원티드 채용공고 크롤링 with Selenium, sqlalchemy, mysql, pandas.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/IBblog/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/OneDayIn21C/IBblog/master?filepath=_notebooks%2F%5B21-08-03%5D%EC%9B%90%ED%8B%B0%EB%93%9C+%EC%B1%84%EC%9A%A9%EA%B3%B5%EA%B3%A0+%ED%81%AC%EB%A1%A4%EB%A7%81+with+Selenium%2C+sqlalchemy%2C+mysql%2C+pandas.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/IBblog/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/OneDayIn21C/IBblog/blob/master/_notebooks/[21-08-03]원티드 채용공고 크롤링 with Selenium, sqlalchemy, mysql, pandas.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/IBblog/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h1"><a href="#1.-기존-데이터-Url-불러오기">1. 기존 데이터 Url 불러오기 </a></li>
+<li class="toc-entry toc-h1"><a href="#2.--추가된-url-주소-리스트-크롤링">2.  추가된 url 주소 리스트 크롤링 </a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#2-1.-'data'-키워드로-검색해-JD-리스트-크롤링">2-1. &#39;data&#39; 키워드로 검색해 JD 리스트 크롤링 </a></li>
+<li class="toc-entry toc-h2"><a href="#2-2.-'데이터'-키워드로-검색해-JD-리스트-크롤링">2-2. &#39;데이터&#39; 키워드로 검색해 JD 리스트 크롤링 </a></li>
+<li class="toc-entry toc-h2"><a href="#2-3.-기존-url과-중복된-url-제거">2-3. 기존 url과 중복된 url 제거 </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#3.-각-url의-JD-contents-크롤링">3. 각 url의 JD contents 크롤링 </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#wanted는-동적-웹페이지이므로-필요한-데이터를-크롤링-하기-위해서는">wanted는 동적 웹페이지이므로 필요한 데이터를 크롤링 하기 위해서는 </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#4.-크롤링-데이터-전처리">4. 크롤링 데이터 전처리 </a></li>
+<li class="toc-entry toc-h1"><a href="#5.-데이터-DB에-추가">5. 데이터 DB에 추가 </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/[21-08-03]원티드 채용공고 크롤링 with Selenium, sqlalchemy, mysql, pandas.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.common.keys</span> <span class="kn">import</span> <span class="n">Keys</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.remote.webelement</span> <span class="kn">import</span> <span class="n">WebElement</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver</span> <span class="kn">import</span> <span class="n">ActionChains</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.support.ui</span> <span class="kn">import</span> <span class="n">WebDriverWait</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.support</span> <span class="kn">import</span> <span class="n">expected_conditions</span> <span class="k">as</span> <span class="n">EC</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">openpyxl</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">pymysql</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">create_engine</span>
+<span class="kn">import</span> <span class="nn">sqlalchemy</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+
+<span class="c1"># MySQL Connector using pymysql</span>
+<span class="n">pymysql</span><span class="o">.</span><span class="n">install_as_MySQLdb</span><span class="p">()</span>
+<span class="kn">import</span> <span class="nn">MySQLdb</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="1.-기존-데이터-Url-불러오기">
+<a class="anchor" href="#1.-%EA%B8%B0%EC%A1%B4-%EB%8D%B0%EC%9D%B4%ED%84%B0-Url-%EB%B6%88%EB%9F%AC%EC%98%A4%EA%B8%B0" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. 기존 데이터 Url 불러오기<a class="anchor-link" href="#1.-%EA%B8%B0%EC%A1%B4-%EB%8D%B0%EC%9D%B4%ED%84%B0-Url-%EB%B6%88%EB%9F%AC%EC%98%A4%EA%B8%B0"> </a>
+</h1>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s2">"mysql+mysqldb://root:"</span><span class="o">+</span><span class="s2">"miro0816"</span><span class="o">+</span><span class="s2">"@localhost/ibdata"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span> <span class="o">=</span> <span class="s1">'localhost'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">3306</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="s1">'root'</span><span class="p">,</span> <span class="n">passwd</span><span class="o">=</span><span class="s1">'miro0816'</span><span class="p">,</span> <span class="n">db</span> <span class="o">=</span> <span class="s1">'ibdata'</span><span class="p">,</span> <span class="n">charset</span> <span class="o">=</span> <span class="s1">'utf8'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">urls</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">"select urls from wanted;"</span><span class="p">,</span> <span class="n">db</span><span class="p">)[</span><span class="s1">'urls'</span><span class="p">]</span>
+<span class="n">urls</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0      https://www.wanted.co.kr/wd/65134
+1      https://www.wanted.co.kr/wd/57687
+2      https://www.wanted.co.kr/wd/36652
+3      https://www.wanted.co.kr/wd/63362
+4      https://www.wanted.co.kr/wd/69476
+                     ...                
+692    https://www.wanted.co.kr/wd/72018
+693    https://www.wanted.co.kr/wd/71613
+694    https://www.wanted.co.kr/wd/61586
+695    https://www.wanted.co.kr/wd/71826
+696    https://www.wanted.co.kr/wd/71700
+Name: urls, Length: 697, dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="2.--추가된-url-주소-리스트-크롤링">
+<a class="anchor" href="#2.--%EC%B6%94%EA%B0%80%EB%90%9C-url-%EC%A3%BC%EC%86%8C-%EB%A6%AC%EC%8A%A4%ED%8A%B8-%ED%81%AC%EB%A1%A4%EB%A7%81" aria-hidden="true"><span class="octicon octicon-link"></span></a>2.  추가된 url 주소 리스트 크롤링<a class="anchor-link" href="#2.--%EC%B6%94%EA%B0%80%EB%90%9C-url-%EC%A3%BC%EC%86%8C-%EB%A6%AC%EC%8A%A4%ED%8A%B8-%ED%81%AC%EB%A1%A4%EB%A7%81"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="2-1.-'data'-키워드로-검색해-JD-리스트-크롤링">
+<a class="anchor" href="#2-1.-'data'-%ED%82%A4%EC%9B%8C%EB%93%9C%EB%A1%9C-%EA%B2%80%EC%83%89%ED%95%B4-JD-%EB%A6%AC%EC%8A%A4%ED%8A%B8-%ED%81%AC%EB%A1%A4%EB%A7%81" aria-hidden="true"><span class="octicon octicon-link"></span></a>2-1. 'data' 키워드로 검색해 JD 리스트 크롤링<a class="anchor-link" href="#2-1.-'data'-%ED%82%A4%EC%9B%8C%EB%93%9C%EB%A1%9C-%EA%B2%80%EC%83%89%ED%95%B4-JD-%EB%A6%AC%EC%8A%A4%ED%8A%B8-%ED%81%AC%EB%A1%A4%EB%A7%81"> </a>
+</h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">call_url</span><span class="p">(</span><span class="n">keyword</span><span class="p">):</span>
+    <span class="n">chromedriver</span> <span class="o">=</span> <span class="s1">'/usr/local/bin/chromedriver'</span> 
+    <span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Chrome</span><span class="p">(</span><span class="n">chromedriver</span><span class="p">)</span>
+    
+    <span class="c1"># 크롤링할 사이트 호출</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"https://www.wanted.co.kr/search?query=</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1"># 페이지 로딩 대기 </span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">prev_height</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">"return document.body.scrollHeight"</span><span class="p">)</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># 스크롤을 화면 가장 아래로 내린다</span>
+        <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">"window.scrollTo(0,document.body.scrollHeight)"</span><span class="p">)</span>
+
+        <span class="c1"># 페이지 로딩 대기</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># 현재 문서 높이를 가져와서 저장</span>
+        <span class="n">curr_height</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">"return document.body.scrollHeight"</span><span class="p">)</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="n">curr_height</span> <span class="o">==</span> <span class="n">prev_height</span><span class="p">):</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prev_height</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">"return document.body.scrollHeight"</span><span class="p">)</span>
+    <span class="k">return</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">call_url</span><span class="p">(</span><span class="s1">'data'</span><span class="p">)</span>        
+
+<span class="c1"># 검색 결과 JD의 전체 url 크롤링</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_elements_by_css_selector</span><span class="p">(</span><span class="s1">'#__next &gt; div &gt; div._325-VFHw4I8HVltNqdJ89t &gt; div:nth-child(3) &gt; div &gt; div &gt; ul &gt; li &gt; div &gt; a'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">address_lst</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+    <span class="n">address_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s1">'href'</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">address_lst</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">address_lst</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>['https://www.wanted.co.kr/wd/59855', 'https://www.wanted.co.kr/wd/73445', 'https://www.wanted.co.kr/wd/48457']
+189
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="2-2.-'데이터'-키워드로-검색해-JD-리스트-크롤링">
+<a class="anchor" href="#2-2.-'%EB%8D%B0%EC%9D%B4%ED%84%B0'-%ED%82%A4%EC%9B%8C%EB%93%9C%EB%A1%9C-%EA%B2%80%EC%83%89%ED%95%B4-JD-%EB%A6%AC%EC%8A%A4%ED%8A%B8-%ED%81%AC%EB%A1%A4%EB%A7%81" aria-hidden="true"><span class="octicon octicon-link"></span></a>2-2. '데이터' 키워드로 검색해 JD 리스트 크롤링<a class="anchor-link" href="#2-2.-'%EB%8D%B0%EC%9D%B4%ED%84%B0'-%ED%82%A4%EC%9B%8C%EB%93%9C%EB%A1%9C-%EA%B2%80%EC%83%89%ED%95%B4-JD-%EB%A6%AC%EC%8A%A4%ED%8A%B8-%ED%81%AC%EB%A1%A4%EB%A7%81"> </a>
+</h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">call_url</span><span class="p">(</span><span class="s1">'데이터'</span><span class="p">)</span>
+<span class="n">elements2</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_elements_by_css_selector</span><span class="p">(</span><span class="s1">'#__next &gt; div &gt; div._325-VFHw4I8HVltNqdJ89t &gt; div:nth-child(3) &gt; div &gt; div &gt; ul &gt; li &gt; div &gt; a'</span><span class="p">)</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">elements2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>376</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">elements2</span><span class="p">:</span>
+    <span class="n">address_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s1">'href'</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">address_lst</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">address_lst</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>['https://www.wanted.co.kr/wd/59855', 'https://www.wanted.co.kr/wd/73445', 'https://www.wanted.co.kr/wd/48457']
+565
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="2-3.-기존-url과-중복된-url-제거">
+<a class="anchor" href="#2-3.-%EA%B8%B0%EC%A1%B4-url%EA%B3%BC-%EC%A4%91%EB%B3%B5%EB%90%9C-url-%EC%A0%9C%EA%B1%B0" aria-hidden="true"><span class="octicon octicon-link"></span></a>2-3. 기존 url과 중복된 url 제거<a class="anchor-link" href="#2-3.-%EA%B8%B0%EC%A1%B4-url%EA%B3%BC-%EC%A4%91%EB%B3%B5%EB%90%9C-url-%EC%A0%9C%EA%B1%B0"> </a>
+</h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">new_urls</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">address_lst</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">urls</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"기존 크롤링 url 수 = "</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">urls</span><span class="p">),</span> <span class="s2">"개"</span><span class="p">),</span>  
+<span class="nb">print</span><span class="p">(</span><span class="s2">"추가된 url 수 = "</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_urls</span><span class="p">),</span> <span class="s2">"개"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>기존 크롤링 url 수 =  697 개
+추가된 url 수 =  70 개
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="3.-각-url의-JD-contents-크롤링">
+<a class="anchor" href="#3.-%EA%B0%81-url%EC%9D%98-JD-contents-%ED%81%AC%EB%A1%A4%EB%A7%81" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. 각 url의 JD contents 크롤링<a class="anchor-link" href="#3.-%EA%B0%81-url%EC%9D%98-JD-contents-%ED%81%AC%EB%A1%A4%EB%A7%81"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="wanted는-동적-웹페이지이므로-필요한-데이터를-크롤링-하기-위해서는">
+<a class="anchor" href="#wanted%EB%8A%94-%EB%8F%99%EC%A0%81-%EC%9B%B9%ED%8E%98%EC%9D%B4%EC%A7%80%EC%9D%B4%EB%AF%80%EB%A1%9C-%ED%95%84%EC%9A%94%ED%95%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC-%ED%81%AC%EB%A1%A4%EB%A7%81-%ED%95%98%EA%B8%B0-%EC%9C%84%ED%95%B4%EC%84%9C%EB%8A%94" aria-hidden="true"><span class="octicon octicon-link"></span></a>wanted는 동적 웹페이지이므로 필요한 데이터를 크롤링 하기 위해서는<a class="anchor-link" href="#wanted%EB%8A%94-%EB%8F%99%EC%A0%81-%EC%9B%B9%ED%8E%98%EC%9D%B4%EC%A7%80%EC%9D%B4%EB%AF%80%EB%A1%9C-%ED%95%84%EC%9A%94%ED%95%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC-%ED%81%AC%EB%A1%A4%EB%A7%81-%ED%95%98%EA%B8%B0-%EC%9C%84%ED%95%B4%EC%84%9C%EB%8A%94"> </a>
+</h4>
+<ul>
+<li>
+<ol>
+<li>해당 데이터가 로드 되는 지점까지 스크롤 다운</li>
+</ol>
+</li>
+<li>
+<ol>
+<li>필요한 데이터를 불러오기까지 대기 </li>
+</ol>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># driver = webdriver.Chrome(chromedriver)</span>
+
+<span class="n">jd_title</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">jd_box</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">jd_end</span> <span class="o">=</span> <span class="p">[]</span> 
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">new_urls</span><span class="p">:</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">"return document.body.scrollHeight"</span><span class="p">)</span> <span class="c1"># 로딩 후 페이지 높이 기져옴</span>
+    
+    <span class="c1"># JD contents의 마지막 대상인 마감일, 위치 데이터를 크롤링 하기 위해 </span>
+    <span class="c1"># 해당 데이터가 위치한 곳까지 스크롤 다운</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_elements_by_css_selector</span><span class="p">(</span><span class="s2">"._3XP3DBqOgzsz7P6KrVpbGO"</span><span class="p">)</span> <span class="o">!=</span> <span class="p">[]:</span>
+            <span class="k">break</span>
+
+        <span class="n">curr_position</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s1">'return window.scrollY'</span><span class="p">)</span> <span class="c1">#현재 스크롤 위치 가져옴</span>
+        <span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="sa">f</span><span class="s1">'window.scrollTo(</span><span class="si">{</span><span class="n">curr_position</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="p">(</span><span class="n">curr_position</span> <span class="o">+</span> <span class="mi">1000</span><span class="p">)</span><span class="si">}</span><span class="s1">)'</span><span class="p">)</span> <span class="c1">#</span>
+<span class="c1">#         print(f'현재 스크롤 위치 &gt;&gt; {curr_position}')</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>    
+        
+                    <span class="c1"># 타겟 엘리먼트 조회</span>
+    <span class="n">jd_title</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_css_selector</span><span class="p">(</span><span class="s2">".Bfoa2bzuGpxK9ieE1GxhW"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">jd_box</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_css_selector</span><span class="p">(</span><span class="s2">"._3_gsSnQyvwrqCAjw47hjWK"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">jd_end</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_css_selector</span><span class="p">(</span><span class="s2">"._3XP3DBqOgzsz7P6KrVpbGO"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'크롤링 완료'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>크롤링 완료
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span> <span class="o">=</span> <span class="n">jd_title</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'contents'</span><span class="p">]</span> <span class="o">=</span> <span class="n">jd_box</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'end'</span><span class="p">]</span> <span class="o">=</span> <span class="n">jd_end</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'url'</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_urls</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">jd_title</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">jd_box</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">jd_end</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(70, 70, 70, 70)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">raw_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">raw_df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">raw_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(70, 4)
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>contents</th>
+      <th>end</th>
+      <th>url</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>데이터 분석 및 모델링 전문가 (Python)\n이글루시큐리티\n응답률 평균 이상\...</td>
+      <td>■ 세계 보안을 지키는 글로벌 정보보안기업 이글루시큐리티\n\n이글루시큐리티는 국내...</td>
+      <td>마감일2021.08.31\n근무지역서울 송파구 문정동 정의로 8길 7 한스빌딩 ㈜이...</td>
+      <td>https://www.wanted.co.kr/wd/64788</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Data Analyst\n미소(miso)\n응답률 평균 이상\n서울.한국\n#누적투...</td>
+      <td>Mission\n\nMiso의 Mission은 ‘우리의 고객에게 행복한 순간을 더 ...</td>
+      <td>마감일2021.08.06\n근무지역서초구 서초대로 396 강남빌딩 18층</td>
+      <td>https://www.wanted.co.kr/wd/73085</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Data Engineer\n아모레퍼시픽(AMOREPACIFIC)\n서울.한국\n#연...</td>
+      <td>아모레퍼시픽은 세상을 바꾸는 아름다움을 창조하는 ‘원대한 기업(Great Globa...</td>
+      <td>마감일2021.08.19\n근무지역서울특별시 용산구 한강대로 100</td>
+      <td>https://www.wanted.co.kr/wd/73445</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Data Scientist\n미소(miso)\n응답률 평균 이상\n서울.한국\n#누...</td>
+      <td>Home Cleaning Team\n\nMiso의 Mission은 ‘우리의 고객에게...</td>
+      <td>마감일2021.08.06\n근무지역서초구 서초대로 396 강남빌딩 18층</td>
+      <td>https://www.wanted.co.kr/wd/72683</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>데이터개발자\n로지스랩\n서울.한국\n#인원급성장#50명이하#설립4~9년#간식#IT...</td>
+      <td>로지스랩은 물류산업의 디지털 트랜스포메이션을 목표로 화물운송 솔루션 개발 및 서비스...</td>
+      <td>마감일2021.08.31\n근무지역서울특별시 강남구 남부순환로 2621</td>
+      <td>https://www.wanted.co.kr/wd/72834</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="4.-크롤링-데이터-전처리">
+<a class="anchor" href="#4.-%ED%81%AC%EB%A1%A4%EB%A7%81-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%A0%84%EC%B2%98%EB%A6%AC" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. 크롤링 데이터 전처리<a class="anchor-link" href="#4.-%ED%81%AC%EB%A1%A4%EB%A7%81-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%A0%84%EC%B2%98%EB%A6%AC"> </a>
+</h1>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">Derive_col</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="c1"># 제목 및 직무명</span>
+    <span class="n">x</span><span class="p">[</span><span class="s1">'jd_title'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]]</span>
+    <span class="c1"># 회사명</span>
+    <span class="n">x</span><span class="p">[</span><span class="s1">'company'</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]]</span>
+    <span class="c1"># 태그</span>
+    <span class="n">x</span><span class="p">[</span><span class="s1">'tag'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">3</span><span class="p">]</span> <span class="k">if</span> <span class="s1">'#'</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">3</span><span class="p">]</span> 
+     <span class="k">else</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">4</span><span class="p">]</span> <span class="k">if</span>  <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">4</span><span class="p">]</span> <span class="ow">in</span> <span class="n">i</span> <span class="ow">and</span> <span class="s1">'#'</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">4</span><span class="p">]</span> 
+     <span class="k">else</span> <span class="s1">''</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]]</span>
+    <span class="c1"># 회사 소개</span>
+    <span class="n">x</span><span class="p">[</span><span class="s1">'intro'</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">주요업무'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="s1">'contents'</span><span class="p">]]</span>
+    <span class="c1"># 주요 업무</span>
+    <span class="n">x</span><span class="p">[</span><span class="s1">'task'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'주요업무</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">자격요건</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="s1">'contents'</span><span class="p">]]</span>
+    <span class="c1"># 자격 요건</span>
+    <span class="n">x</span><span class="p">[</span><span class="s1">'condition'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">자격요건</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">우대사항</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">우대사항</span><span class="se">\n</span><span class="s1">'</span> <span class="ow">in</span> <span class="n">i</span>
+                      <span class="k">else</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">자격요건</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'\혜택 및 복지</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="s1">'contents'</span><span class="p">]]</span>
+    <span class="c1"># 우대 사항</span>
+    <span class="n">x</span><span class="p">[</span><span class="s1">'prefer'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">우대사항</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">혜택 및 복지</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">우대사항</span><span class="se">\n</span><span class="s1">'</span> <span class="ow">in</span> <span class="n">i</span>
+                   <span class="k">else</span> <span class="s1">''</span>  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="s1">'contents'</span><span class="p">]]</span>
+    <span class="c1"># 복지 혜택</span>
+    <span class="n">x</span><span class="p">[</span><span class="s1">'welfare'</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">혜택 및 복지</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="s1">'contents'</span><span class="p">]]</span>
+
+    <span class="c1"># 모집 마감일</span>
+    <span class="n">x</span><span class="p">[</span><span class="s1">'end_date'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'마감일'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="s1">'end'</span><span class="p">]]</span>
+    <span class="c1"># 회사 위치</span>
+    <span class="n">x</span><span class="p">[</span><span class="s1">'place'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'근무지역'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="s1">'근무지역'</span> <span class="ow">in</span> <span class="n">i</span> <span class="k">else</span> <span class="s1">''</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="s1">'end'</span><span class="p">]]</span>
+    <span class="c1"># 컬럼 순서 변경</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[[</span><span class="s1">'jd_title'</span><span class="p">,</span> <span class="s1">'company'</span><span class="p">,</span><span class="s1">'tag'</span><span class="p">,</span> <span class="s1">'intro'</span><span class="p">,</span> <span class="s1">'task'</span><span class="p">,</span> <span class="s1">'condition'</span><span class="p">,</span>  <span class="s1">'welfare'</span><span class="p">,</span> <span class="s1">'prefer'</span><span class="p">,</span> <span class="s1">'end_date'</span><span class="p">,</span> <span class="s1">'place'</span><span class="p">,</span> <span class="s1">'url'</span><span class="p">]]</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wanted</span> <span class="o">=</span> <span class="n">Derive_col</span><span class="p">(</span><span class="n">raw_df</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wanted</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">wanted</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(70, 11)
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>jd_title</th>
+      <th>company</th>
+      <th>tag</th>
+      <th>intro</th>
+      <th>task</th>
+      <th>condition</th>
+      <th>welfare</th>
+      <th>prefer</th>
+      <th>end_date</th>
+      <th>place</th>
+      <th>url</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>데이터 분석 및 모델링 전문가 (Python)</td>
+      <td>이글루시큐리티</td>
+      <td>#연봉업계평균이상#인원급성장#퇴사율 6~10%#301~1,000명#설립10년이상#유...</td>
+      <td>■ 세계 보안을 지키는 글로벌 정보보안기업 이글루시큐리티\n\n이글루시큐리티는 국내...</td>
+      <td>• 정보보안 관련 빅데이터 처리\n• 데이터 분석을 위한 실험설계, 가설 검증 등 ...</td>
+      <td>• 학력 : 대졸 이상 (전공무관)\n• 경력 : 유관경력 3년 이상\n• SQL,...</td>
+      <td>• 임직원 건강관리 지원제도 \n - 임직원 단체보험 가입 (보장성, 일반형)\n ...</td>
+      <td>• 컴퓨터공학, 통계학 관련 전공 우대 (석/박사 우대)\n• 데이터 및 인공지능 ...</td>
+      <td>2021.08.31</td>
+      <td>서울 송파구 문정동 정의로 8길 7 한스빌딩 ㈜이글루시큐리티</td>
+      <td>https://www.wanted.co.kr/wd/64788</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Data Analyst</td>
+      <td>미소(miso)</td>
+      <td>#누적투자100억이상#인원급성장#51~300명#설립4~9년#유연근무#조식제공#커피#...</td>
+      <td>Mission\n\nMiso의 Mission은 ‘우리의 고객에게 행복한 순간을 더 ...</td>
+      <td>[미소에서 하게 될 업무는요]\n\n• Data Analysis: 데이터 가공, A...</td>
+      <td>[자격요건]\n\n• 유관 직종 2년 이상의 실무 경력\n• Quantitative...</td>
+      <td>[보상 및 혜택]\n\n• 정직원 Stock Option 보상\n• 홈클리닝 서비스...</td>
+      <td>[이런 분을 우대합니다]\n\n• 프로젝트별 우선순위 설정, 효율적인 리소스 분배를...</td>
+      <td>2021.08.06</td>
+      <td>서초구 서초대로 396 강남빌딩 18층</td>
+      <td>https://www.wanted.co.kr/wd/73085</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wanted</span><span class="p">[</span><span class="n">wanted</span><span class="p">[</span><span class="s1">'company'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">'매스프레소'</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>jd_title</th>
+      <th>company</th>
+      <th>tag</th>
+      <th>intro</th>
+      <th>task</th>
+      <th>condition</th>
+      <th>welfare</th>
+      <th>prefer</th>
+      <th>end_date</th>
+      <th>place</th>
+      <th>url</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2</th>
+      <td>Data Analyst</td>
+      <td>매스프레소(Mathpresso)</td>
+      <td>#연봉상위11~20%#누적투자100억이상#인원급성장#51~300명#설립4~9년#유연...</td>
+      <td>매스프레소는 문제 검색, 질문답변, 맞춤형 개념학습 콘텐츠를 제공하는 교육 플랫폼 ...</td>
+      <td>• 서비스 지표 상승 및 문제 해결을 위한 데이터 기반의 인사이트 제공\n• 데이터...</td>
+      <td>• 단순한 아이디어 차원이 아닌 실질적인 action을 위한 구체적인 인사이트를\n...</td>
+      <td>• 코어타임 11시-5시를 기준으로 한 자유로운 출퇴근, 유연근무제 운영\n• 눈치...</td>
+      <td>• Growth팀(Growth Hacking) 또는 Lean Startup에 대한 ...</td>
+      <td>상시</td>
+      <td>강남구 선릉로 428, 17층</td>
+      <td>https://www.wanted.co.kr/wd/30355</td>
+    </tr>
+    <tr>
+      <th>59</th>
+      <td>Data Engineer</td>
+      <td>매스프레소(Mathpresso)</td>
+      <td>#연봉상위11~20%#누적투자100억이상#인원급성장#51~300명#설립4~9년#유연...</td>
+      <td>매스프레소는 문제 검색, 질문답변, 맞춤형 개념학습 콘텐츠를 제공하는 교육 플랫폼 ...</td>
+      <td>• 빠르게 늘어나고 있는 매스프레소의 데이터 규모에 맞추어 확장가능한 데이터 인프라...</td>
+      <td>• 대용량 데이터 처리 시스템 구축과 관련된 경력 1년 이상\n• 파이프라인 및 분...</td>
+      <td>• 코어타임 11시-5시를 기준으로 한 자유로운 출퇴근, 유연근무제 운영\n• 눈치...</td>
+      <td>• 다양한 상황에서 최적의 솔루션을 찾을 수 있는 문제해결능력 및 원활한 커뮤니케이...</td>
+      <td>상시</td>
+      <td>강남구 선릉로 428, 17층</td>
+      <td>https://www.wanted.co.kr/wd/52536</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="5.-데이터-DB에-추가">
+<a class="anchor" href="#5.-%EB%8D%B0%EC%9D%B4%ED%84%B0-DB%EC%97%90-%EC%B6%94%EA%B0%80" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. 데이터 DB에 추가<a class="anchor-link" href="#5.-%EB%8D%B0%EC%9D%B4%ED%84%B0-DB%EC%97%90-%EC%B6%94%EA%B0%80"> </a>
+</h1>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'직무'</span><span class="p">,</span> <span class="s1">'회사'</span><span class="p">,</span> <span class="s1">'태그'</span><span class="p">,</span> <span class="s1">'회사소개'</span><span class="p">,</span> <span class="s1">'주요업무'</span><span class="p">,</span> <span class="s1">'자격요건'</span><span class="p">,</span> <span class="s1">'우대사항'</span><span class="p">,</span> <span class="s1">'복지_기타'</span><span class="p">,</span> <span class="s1">'마감일'</span><span class="p">,</span> <span class="s1">'위치'</span><span class="p">,</span> <span class="s1">'urls'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wanted</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">cols</span>
+<span class="n">wanted</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>직무</th>
+      <th>회사</th>
+      <th>태그</th>
+      <th>회사소개</th>
+      <th>주요업무</th>
+      <th>자격요건</th>
+      <th>우대사항</th>
+      <th>복지_기타</th>
+      <th>마감일</th>
+      <th>위치</th>
+      <th>urls</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>데이터 분석 및 모델링 전문가 (Python)</td>
+      <td>이글루시큐리티</td>
+      <td>#연봉업계평균이상#인원급성장#퇴사율 6~10%#301~1,000명#설립10년이상#유...</td>
+      <td>■ 세계 보안을 지키는 글로벌 정보보안기업 이글루시큐리티\n\n이글루시큐리티는 국내...</td>
+      <td>• 정보보안 관련 빅데이터 처리\n• 데이터 분석을 위한 실험설계, 가설 검증 등 ...</td>
+      <td>• 학력 : 대졸 이상 (전공무관)\n• 경력 : 유관경력 3년 이상\n• SQL,...</td>
+      <td>• 임직원 건강관리 지원제도 \n - 임직원 단체보험 가입 (보장성, 일반형)\n ...</td>
+      <td>• 컴퓨터공학, 통계학 관련 전공 우대 (석/박사 우대)\n• 데이터 및 인공지능 ...</td>
+      <td>2021.08.31</td>
+      <td>서울 송파구 문정동 정의로 8길 7 한스빌딩 ㈜이글루시큐리티</td>
+      <td>https://www.wanted.co.kr/wd/64788</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dtypesql</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'직무'</span><span class="p">:</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">VARCHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> 
+          <span class="s1">'회사'</span><span class="p">:</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">VARCHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> 
+          <span class="s1">'태그'</span><span class="p">:</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span> 
+          <span class="s1">'회사소개'</span><span class="p">:</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span> 
+            <span class="s1">'주요업무'</span><span class="p">:</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span> 
+            <span class="s1">'자격요건'</span><span class="p">:</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span> 
+            <span class="s1">'우대사항'</span><span class="p">:</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span> 
+            <span class="s1">'복지_기타'</span><span class="p">:</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span> 
+            <span class="s1">'마감일'</span><span class="p">:</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span>
+            <span class="s1">'위치'</span><span class="p">:</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span>
+            <span class="s1">'urls'</span><span class="p">:</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">TEXT</span>            
+<span class="p">}</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wanted</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'wanted'</span><span class="p">,</span> <span class="n">con</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span> <span class="n">if_exists</span><span class="o">=</span><span class="s1">'append'</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">dtypesql</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wanted</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">"select * from wanted;"</span><span class="p">,</span> <span class="n">con</span> <span class="o">=</span> <span class="n">engine</span><span class="p">)</span>
+<span class="n">wanted</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>직무</th>
+      <th>회사</th>
+      <th>태그</th>
+      <th>회사소개</th>
+      <th>주요업무</th>
+      <th>자격요건</th>
+      <th>우대사항</th>
+      <th>복지_기타</th>
+      <th>마감일</th>
+      <th>위치</th>
+      <th>urls</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>764</th>
+      <td>Data Engineer (전문연구요원)</td>
+      <td>오비이랩(Obelab)</td>
+      <td>#인원급성장#퇴사율5%이하#50명이하#설립4~9년#스타트업#식비#건강검진#전문연구요...</td>
+      <td>OBELAB is an integrated solution company speci...</td>
+      <td>• fNIRS 데이터 분석을 고도화 시키기 위한 선행 분석 알고리즘 개발\n• Di...</td>
+      <td>• 석/박사 병역특례(전문연구요원) 현역에 한해 지원 가능\n• 전기전자, 의용공학...</td>
+      <td>• 자율출근제 시행(08:00~10:30 출근)\n• 매월 마지막주 금요일 4시 퇴...</td>
+      <td>• MS Office 사용 능숙자 (Powerpoint, Excel, Word 등)...</td>
+      <td>상시</td>
+      <td>서울특별시 강남구 테헤란로312 비전타워 12층</td>
+      <td>https://www.wanted.co.kr/wd/72453</td>
+    </tr>
+    <tr>
+      <th>765</th>
+      <td>[Graphic AI] Computer Graphics Research &amp; Engi...</td>
+      <td>한국공간데이터</td>
+      <td>#스타트업#시리얼#맥주#커피#재택근무#건강검진#교육비#인공지능#IT, 컨텐츠</td>
+      <td>저희 한국공간데이터는 청소/수리/비품 관리 등 프리미엄 공간 관리 서비스를 제공하는...</td>
+      <td>자사 플랫폼 서비스를 제공하는 파트너사의 공간을 3D 환경에 적용 및 데이터 분석\...</td>
+      <td>• Computer Graphics 관련 지식 보유자.\n• 관련 분야 석/박사 학...</td>
+      <td>- 업무형 최신 장비 및 듀얼모니터 제공\n- 주 40시간 탄력근무제 (~ 오전 1...</td>
+      <td>• Reinforcement Learning 연구 개발 경험.\n• 간단한 Mate...</td>
+      <td>상시</td>
+      <td>서울특별시 강남구 삼성동 157-33 패스트파이브 12층</td>
+      <td>https://www.wanted.co.kr/wd/45608</td>
+    </tr>
+    <tr>
+      <th>766</th>
+      <td>데이터베이스 관리자(DBA)</td>
+      <td>코코네</td>
+      <td>#연봉업계평균이상#인원급성장#51~300명#설립4~9년#커피#샐러드#과일#사내식당#...</td>
+      <td>코코네는 감성이 표현가능한 디지털 어패럴 서비스를 제공하는 글로벌 기업입니다.\n\...</td>
+      <td>• 데이터베이스 모델링 및 Stored Procedure 개발\n• DBMS 운영 ...</td>
+      <td>• 게임, 상용서비스의 데이터베이스 개발 및 운영 경력 3년 이상\n• MySQL,...</td>
+      <td>• 근무시간  \n  09:30 ～ 18:30 (점심시간 13:00~14:00)\n...</td>
+      <td>• MongoDB 구축 운영 경험\n• 데이터 ETL 및 DW 구축 경험\n• Re...</td>
+      <td>상시</td>
+      <td>강남구 학동로9길 19</td>
+      <td>https://www.wanted.co.kr/wd/3737</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wanted</span><span class="p">[</span><span class="n">wanted</span><span class="p">[</span><span class="s1">'마감일'</span><span class="p">]</span><span class="o">&gt;</span> <span class="s1">'2021.08.08'</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="s1">'마감일'</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>직무</th>
+      <th>회사</th>
+      <th>태그</th>
+      <th>회사소개</th>
+      <th>주요업무</th>
+      <th>자격요건</th>
+      <th>우대사항</th>
+      <th>복지_기타</th>
+      <th>마감일</th>
+      <th>위치</th>
+      <th>urls</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>77</th>
+      <td>4차 산업 기반(블록체인, AI, Bigdata, IoT 등) 관급 프로젝트 개발 PM</td>
+      <td>시티랩스</td>
+      <td>#연봉업계평균이상#인원급성장#51~300명#설립10년이상#석식제공#헬스장#재택근무#...</td>
+      <td>(주)시티랩스는 지능형교통시스템 전문업체로 지난 1996년에 설립되었습니다. 그 동...</td>
+      <td>• 4차 산업 기반(블록체인, AI, Bigdata, IoT 등) 관급 사업 및 과...</td>
+      <td>• 대형 개발 프로젝트 PM 또는 PL 경험 \n\n• 개발에 대한 이해도가 있어 ...</td>
+      <td>• 매주 수요일 재택 근무\n• 함께 성장 할 수 있도록 Stock Option을 ...</td>
+      <td>• 해외 개발팀과 의사소통 가능하신 분</td>
+      <td>2021.08.13</td>
+      <td>역삼동</td>
+      <td>https://www.wanted.co.kr/wd/62374</td>
+    </tr>
+    <tr>
+      <th>729</th>
+      <td>데이터분석</td>
+      <td>중앙일보</td>
+      <td>#연봉상위1%#인원급성장#퇴사율 6~10%#301~1,000명#설립10년이상#의료비...</td>
+      <td>중앙일보의 유저 데이터를 분석하고 사업의 방향을 함께 설정할 데이터분석 전문가를 모...</td>
+      <td>• 이용자 행동 데이터 분석\n• 비즈니스 지표 기획</td>
+      <td>• 데이터 모델링 설계 및 구축 경험\n• 콘텐트, 이용자, 서비스 등 각 관점에서...</td>
+      <td>• 의료비 보장보험 및 종합검진비용 지원\n• 그룹사(중앙일보/JTBC/메가박스/휘...</td>
+      <td>• R, Python 등 데이터 수집 / 분석 툴 사용 경험 우대\n• 머신러닝 기...</td>
+      <td>2021.08.14</td>
+      <td>서울특별시 마포구 상암산로 48-6 중앙일보 빌딩</td>
+      <td>https://www.wanted.co.kr/wd/63272</td>
+    </tr>
+    <tr>
+      <th>763</th>
+      <td>빅데이터 연구원(Data Researcher)</td>
+      <td>아이겐코리아</td>
+      <td>#연봉상위11~20%#인원급성장#50명이하#설립3년이하#커피#건강검진#인공지능#통신...</td>
+      <td>[아이겐코리아는 어떤 곳인가요?]\n\nMonetize data you need! ...</td>
+      <td>[이런 업무를 담당합니다]\n\n• Machine Learning/Deep Lear...</td>
+      <td>[이런 분을 찾습니다]\n\n• 고객 데이터 분석(온라인 커머스를 포함한 B2C 업...</td>
+      <td>• 압구정역에서 도보 10분 - 접근성 용이한 압구정에 사무실 위치 \n\n• 러시...</td>
+      <td>[이런 분을 우대합니다]\n\n• 수학/통계/컴퓨터공학/산업공학/경영학 등 데이터 ...</td>
+      <td>2021.08.14</td>
+      <td>서울시 강남구 신사동 571번지 정인빌딩</td>
+      <td>https://www.wanted.co.kr/wd/48256</td>
+    </tr>
+    <tr>
+      <th>699</th>
+      <td>Data Engineer</td>
+      <td>아모레퍼시픽(AMOREPACIFIC)</td>
+      <td>#연봉상위1%#퇴사율5%이하#1,001~10,000명#설립10년이상#제조</td>
+      <td>아모레퍼시픽은 세상을 바꾸는 아름다움을 창조하는 ‘원대한 기업(Great Globa...</td>
+      <td>▶ 빅데이터 파이프라인 구축 및 데이터 처리 ( AWS Cloud )\n- 배치 데...</td>
+      <td>▶ 경력년수 : 유관 경력 총 1년 이상\n▶ 필수 조건\n- 빅데이터 파이프라인 ...</td>
+      <td>- 주 5일 근무, 주 40시간 (일 8시간, 점심시간 1시간 제외)\n- 카페테리...</td>
+      <td>▶ 우대 조건\n- 클라우드 환경 데이터 인프라환경에서의 데이터데이터 파이프라인 개...</td>
+      <td>2021.08.19</td>
+      <td>서울특별시 용산구 한강대로 100</td>
+      <td>https://www.wanted.co.kr/wd/73445</td>
+    </tr>
+    <tr>
+      <th>742</th>
+      <td>데이터 엔지니어</td>
+      <td>지에스리테일(GS리테일)</td>
+      <td>#연봉업계평균이상#퇴사율5%이하#1,001~10,000명#설립10년이상#판매, 유통</td>
+      <td>클라우드(AWS) 기반 데이터 수집/분석 플랫폼 운영 및 개발</td>
+      <td>• 클라우드 기반의 데이터 플랫폼 아키텍처 설계, 기능 개발 및 운영\n• 배치/실...</td>
+      <td>• 3년 이상의 관련 경력을 보유하신 분\n• 대용량 데이터 분산처리 기술에 대한 ...</td>
+      <td>• GS리테일 입사시 사내 복리후생\n• 4대보험</td>
+      <td>• AWS 클라우드 기반의 데이터 엔지니어링 경험이 있는 분\n• Hadoop 기반...</td>
+      <td>2021.08.20</td>
+      <td>서울시 강남구 논현로 508(역삼동 679번지 GS타워)</td>
+      <td>https://www.wanted.co.kr/wd/73387</td>
+    </tr>
+    <tr>
+      <th>557</th>
+      <td>데이터 분석 Senior</td>
+      <td>펑타이코리아(PENGTAI)</td>
+      <td>#연봉상위11~20%#인원성장#퇴사율5%이하#301~1,000명#설립4~9년#커피#...</td>
+      <td>평균연령 32.5세의 젊고 유쾌한 조직문화를 가진 펑타이의 사업확대에 따른 추가 채...</td>
+      <td>• 이스토어 캠페인 효과 분석\n• 제품 페이지 콘텐츠 분석, 이동경로 분석\n• ...</td>
+      <td>• Google Analytics 혹은 Adobe Analytics 활용 능력 중급...</td>
+      <td>■ 혜택 및 복지\n-편리한 출퇴근 (강남역 3번출구 앞)\n-자율적 업무환경 및 ...</td>
+      <td>• SQL/R/Python/SPSS 활용 경험 우대\n• 브랜드 자사몰 운영 경험 ...</td>
+      <td>2021.08.22</td>
+      <td>서울 강남구 강남대로 372 화인타워 16층</td>
+      <td>https://www.wanted.co.kr/wd/71596</td>
+    </tr>
+    <tr>
+      <th>759</th>
+      <td>프론트엔드 개발자 (데이터팀)</td>
+      <td>오픈서베이</td>
+      <td>#연봉상위11~20%#인원급성장#51~300명#설립10년이상#리프레시휴가#반려동물#...</td>
+      <td>【 오픈서베이 소개 】\n고객 경험의 시대, 오픈서베이는 기술로 설문조사의 가치를 ...</td>
+      <td>• 설문응답 결과 표현과 분석도구 개발 전반 : Openanalytics (http...</td>
+      <td>• HTML, CSS, Javascript, SPA 프레임워크 기반 개발 및 서비스...</td>
+      <td>【복지】\nRefresh\n• 180만원의 복지포인트 : 운동, 여행, 자기계발에 ...</td>
+      <td>• 서비스를 초기 설계부터 런칭하고 운영까지 참여해본 경험\n• 데이터 시각화 경험...</td>
+      <td>2021.08.27</td>
+      <td>서울 서초구 서초대로 78길 5 대각빌딩 10층</td>
+      <td>https://www.wanted.co.kr/wd/72438</td>
+    </tr>
+    <tr>
+      <th>78</th>
+      <td>데이터 사이언티스트 / 머신러닝&amp;딥러닝 엔지니어</td>
+      <td>파이온코퍼레이션(PionCorporation)</td>
+      <td>#음료#커피#건강검진#인공지능#통신비#IT, 컨텐츠</td>
+      <td>24th Kaggle Rank를 달성했던 경험과 실리콘밸리에서 성공적 경험을 가진 ...</td>
+      <td>• Computer Vision/영상 데이터 분석 및 모델링 - 이미지내 Text ...</td>
+      <td>• ML 기본 알고리즘 사용및 작동 방식의 이해: regression, decisi...</td>
+      <td>• 각종 경조사비\n• 생일 상품권\n• 매년 건강검진 지원 (지정된 업체에서 진행...</td>
+      <td>• 실데이터 분석 및 모델링 경험자\n• 온라인 광고, AdTech 유경험자\n• ...</td>
+      <td>2021.08.28</td>
+      <td>서울시 강남구 삼성로 85길 26, V&amp;S 601호</td>
+      <td>https://www.wanted.co.kr/wd/63936</td>
+    </tr>
+    <tr>
+      <th>708</th>
+      <td>데이터 엔지니어</td>
+      <td>펑타이코리아(PENGTAI)</td>
+      <td>#연봉상위11~20%#퇴사율5%이하#301~1,000명#설립4~9년#커피#간식#대출...</td>
+      <td>평균연령 32.5세의 젊고 유쾌한 조직문화를 가진 펑타이의 사업확대에 따른 추가 채...</td>
+      <td>• 웹 기반 애드테크 솔루션 개발(현행 테크 스택 - python / golang ...</td>
+      <td>• 프로그래밍이 가능한 자 (github, bitbucket 계정 또는 소스코드 포...</td>
+      <td>■ 혜택 및 복지\n-편리한 출퇴근 (강남역 3번출구 앞)\n-자율적 업무환경 및 ...</td>
+      <td>• 개인 프로젝트, 오픈소스 프로젝트 경험자 우대\n• 스타트업 경력 우대\n• 데...</td>
+      <td>2021.08.28</td>
+      <td>서울 강남구 강남대로 372 화인타워 16층</td>
+      <td>https://www.wanted.co.kr/wd/73054</td>
+    </tr>
+    <tr>
+      <th>735</th>
+      <td>데이터개발</td>
+      <td>중앙일보</td>
+      <td>#연봉상위1%#인원급성장#퇴사율 6~10%#301~1,000명#설립10년이상#의료비...</td>
+      <td>중앙일보 뉴스서비스실은 중앙그룹의 디지털 뉴스를 세상에 전달하기 위한\n백엔드 플랫...</td>
+      <td>• 데이터 시스템 개발 및 유지보수\n• ElasticSearch 검색 시스템 개발...</td>
+      <td>• Hadoop-Ecosystem 및 MongoDB 기반 개발/운영 경험\n• El...</td>
+      <td>• 의료비 보장보험 및 종합검진비용 지원\n• 그룹사(중앙일보/JTBC/메가박스/휘...</td>
+      <td>• GA360, Tag Manager, BigQuery, Data Studio 경험...</td>
+      <td>2021.08.30</td>
+      <td>서울특별시 마포구 상암산로 48-6 중앙일보 빌딩</td>
+      <td>https://www.wanted.co.kr/wd/63277</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="OneDayIn21C/IBblog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/IBblog/jupyter/mysql/pandas/selenium/2021/08/12/21-08-03-%EC%9B%90%ED%8B%B0%EB%93%9C-%EC%B1%84%EC%9A%A9%EA%B3%B5%EA%B3%A0-%ED%81%AC%EB%A1%A4%EB%A7%81-with-Selenium,-sqlalchemy,-mysql,-pandas.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/IBblog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/IBblog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/IBblog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/fastai" title="fastai"><svg class="svg-icon grey"><use xlink:href="/IBblog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/IBblog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
